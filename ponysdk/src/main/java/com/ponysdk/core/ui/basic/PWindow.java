@@ -95,7 +95,7 @@ public class PWindow extends PObject {
         if (initializeListeners != null) initializeListeners.forEach(listener -> listener.onInitialize(this));
     }
 
-    public static PWindow getMain() {
+    public static final PWindow getMain() {
         PWindow mainWindow = UIContext.get().getAttribute(PWindow.class.getCanonicalName());
         if (mainWindow == null) {
             mainWindow = new PMainWindow();
@@ -105,12 +105,12 @@ public class PWindow extends PObject {
     }
 
     @Override
-    protected WidgetType getWidgetType() {
+    WidgetType getWidgetType() {
         return WidgetType.WINDOW;
     }
 
     @Override
-    protected void enrichOnInit(final ModelWriter writer) {
+    final void enrichOnInit(final ModelWriter writer) {
         super.enrichOnInit(writer);
         writer.write(ServerToClientModel.RELATIVE, relative);
         writer.write(ServerToClientModel.URL, url);
@@ -378,6 +378,38 @@ public class PWindow extends PObject {
 
         public void setTitle(final String title) {
             this.title = title;
+        }
+
+    }
+
+    private static final class PMainWindow extends PWindow {
+
+        @Override
+        final void init() {
+            final ModelWriter writer = Txn.getWriter();
+            writer.beginObject();
+            writer.write(ServerToClientModel.TYPE_CREATE, ID);
+            writer.write(ServerToClientModel.WIDGET_TYPE, getWidgetType().getValue());
+            writer.endObject();
+            UIContext.get().registerObject(this);
+            initialized = true;
+
+            UIContext.get().addUIContextListener(uiContext -> onDestroy());
+        }
+
+        @Override
+        public final void open() {
+            // Already open
+        }
+
+        @Override
+        public final void close() {
+            // should destroy the main window ??
+        }
+
+        @Override
+        final WidgetType getWidgetType() {
+            return WidgetType.BROWSER;
         }
 
     }
