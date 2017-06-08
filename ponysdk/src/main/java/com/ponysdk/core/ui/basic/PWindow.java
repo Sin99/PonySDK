@@ -105,12 +105,12 @@ public class PWindow extends PObject {
     }
 
     @Override
-    WidgetType getWidgetType() {
+    protected WidgetType getWidgetType() {
         return WidgetType.WINDOW;
     }
 
     @Override
-    final void enrichOnInit(final ModelWriter writer) {
+    protected final void enrichOnInit(final ModelWriter writer) {
         super.enrichOnInit(writer);
         writer.write(ServerToClientModel.RELATIVE, relative);
         writer.write(ServerToClientModel.URL, url);
@@ -408,7 +408,7 @@ public class PWindow extends PObject {
         }
 
         @Override
-        final WidgetType getWidgetType() {
+        protected final WidgetType getWidgetType() {
             return WidgetType.BROWSER;
         }
 
