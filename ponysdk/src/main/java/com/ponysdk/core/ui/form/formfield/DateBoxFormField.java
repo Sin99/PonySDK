@@ -23,16 +23,17 @@
 
 package com.ponysdk.core.ui.form.formfield;
 
-import com.ponysdk.core.ui.basic.Element;
-import com.ponysdk.core.ui.basic.PDateBox;
-import com.ponysdk.core.ui.basic.event.PValueChangeHandler;
-import com.ponysdk.core.ui.form.dataconverter.DataConverter;
-import com.ponysdk.core.ui.form.dataconverter.DateConverter;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.ponysdk.core.ui.basic.Element;
+import com.ponysdk.core.ui.basic.PDateBox;
+import com.ponysdk.core.ui.form.dataconverter.DataConverter;
+import com.ponysdk.core.ui.form.dataconverter.DateConverter;
+
 public class DateBoxFormField extends AbstractFormField<Date, PDateBox> {
+
+    protected Date initialValue;
 
     public DateBoxFormField() {
         this(Element.newPDateBox(), new DateConverter());
@@ -52,12 +53,7 @@ public class DateBoxFormField extends AbstractFormField<Date, PDateBox> {
 
     public DateBoxFormField(final PDateBox widget, final DataConverter<String, Date> dataConverter) {
         super(widget, dataConverter);
-    }
-
-    @Override
-    public void addValueChangeHandler(final PValueChangeHandler<Date> handler) {
-        if (handlers == null) widget.addValueChangeHandler(event -> fireValueChange(getValue()));
-        super.addValueChangeHandler(handler);
+        widget.addValueChangeHandler(event -> fireValueChange(getValue()));
     }
 
     @Override
@@ -84,6 +80,16 @@ public class DateBoxFormField extends AbstractFormField<Date, PDateBox> {
     public void setEnabled(final boolean enabled) {
         super.setEnabled(enabled);
         widget.setEnabled(enabled);
+    }
+
+    @Override
+    public void commit() {
+        initialValue = getValue();
+    }
+
+    @Override
+    public void rollback() {
+        setValue(initialValue);
     }
 
 }

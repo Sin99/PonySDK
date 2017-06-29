@@ -25,10 +25,11 @@ package com.ponysdk.core.ui.form.formfield;
 
 import com.ponysdk.core.ui.basic.Element;
 import com.ponysdk.core.ui.basic.PTextBox;
-import com.ponysdk.core.ui.basic.event.PValueChangeHandler;
 import com.ponysdk.core.ui.form.dataconverter.DataConverter;
 
 public class TextBoxFormField<T> extends AbstractFormField<T, PTextBox> {
+
+    protected T initialValue;
 
     public TextBoxFormField(final DataConverter<String, T> dataProvider) {
         this(Element.newPTextBox(), dataProvider);
@@ -36,12 +37,7 @@ public class TextBoxFormField<T> extends AbstractFormField<T, PTextBox> {
 
     public TextBoxFormField(final PTextBox widget, final DataConverter<String, T> dataProvider) {
         super(widget, dataProvider);
-    }
-
-    @Override
-    public void addValueChangeHandler(final PValueChangeHandler<T> handler) {
-        if (handlers == null) widget.addValueChangeHandler(event -> fireValueChange(getValue()));
-        super.addValueChangeHandler(handler);
+        widget.addValueChangeHandler(event -> fireValueChange(getValue()));
     }
 
     @Override
@@ -56,6 +52,7 @@ public class TextBoxFormField<T> extends AbstractFormField<T, PTextBox> {
 
     @Override
     public void setValue(final T value) {
+        initialValue = value;
         widget.setValue(dataProvider.from(value));
     }
 
@@ -68,6 +65,16 @@ public class TextBoxFormField<T> extends AbstractFormField<T, PTextBox> {
     public void setEnabled(final boolean enabled) {
         super.setEnabled(enabled);
         widget.setEnabled(enabled);
+    }
+
+    @Override
+    public void commit() {
+        initialValue = getValue();
+    }
+
+    @Override
+    public void rollback() {
+        setValue(initialValue);
     }
 
 }

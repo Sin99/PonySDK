@@ -28,8 +28,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 
 import com.ponysdk.core.model.PUnit;
 import com.ponysdk.core.server.application.UIContext;
@@ -62,6 +64,9 @@ import com.ponysdk.core.ui.datagrid.ColumnDescriptor;
 import com.ponysdk.core.ui.datagrid.DataGrid;
 import com.ponysdk.core.ui.datagrid.impl.PLabelCellRenderer;
 import com.ponysdk.core.ui.eventbus2.EventBus.EventHandler;
+import com.ponysdk.core.ui.form.Form;
+import com.ponysdk.core.ui.form.formfield.StringListBoxFormField;
+import com.ponysdk.core.ui.form.formfield.StringTextBoxFormField;
 import com.ponysdk.core.ui.grid.AbstractGridWidget;
 import com.ponysdk.core.ui.grid.GridTableWidget;
 import com.ponysdk.core.ui.list.DataGridColumnDescriptor;
@@ -81,17 +86,90 @@ import com.ponysdk.sample.client.page.addon.LoggerAddOn;
 
 public class UISampleEntryPoint implements EntryPoint, UserLoggedOutHandler {
 
-    private PLabel mainLabel;
+    private PFlowPanel panel;
 
     // HighChartsStackedColumnAddOn highChartsStackedColumnAddOn;
     int a = 0;
+
+    private PLabel mainLabel;
 
     @Override
     public void start(final UIContext uiContext) {
         uiContext.setClientDataOutput((object, instruction) -> System.err.println(object + " : " + instruction));
 
-        mainLabel = Element.newPLabel("Can be modified by anybody");
-        PWindow.getMain().add(mainLabel);
+        panel = Element.newPFlowPanel();
+        PWindow.getMain().add(panel);
+
+        final DataGrid<String> grid = new DataGrid<>(Comparator.comparing(String::length));
+        grid.addColumnDescriptor(ColumnDescriptor.newDefault("Coucou", Function.identity()));
+
+        grid.setData("aa");
+        grid.setData("ab");
+        grid.setData("ac");
+        grid.setData("ad");
+        grid.setData("ad");
+        grid.setData("ae");
+        grid.setData("af");
+        grid.setData("afdsdsd");
+        grid.setData("afdsdsddsds");
+        grid.setData("afdsdsdsdsd");
+        grid.setData("afdsdsdsdsd");
+        grid.setData("af");
+        grid.setData("ag");
+
+        panel.add(grid);
+
+        final Form form = new Form();
+
+        final StringTextBoxFormField field1 = new StringTextBoxFormField();
+        final StringTextBoxFormField field2 = new StringTextBoxFormField();
+        final StringTextBoxFormField field3 = new StringTextBoxFormField();
+        final StringTextBoxFormField field4 = new StringTextBoxFormField();
+        final StringTextBoxFormField field5 = new StringTextBoxFormField();
+        final StringTextBoxFormField field6 = new StringTextBoxFormField();
+        final StringListBoxFormField field7 = new StringListBoxFormField();
+
+        field7.getWidget().setMultipleSelect(true);
+        field7.getWidget().setVisibleItemCount(5);
+
+        field7.addItem("Totot");
+        field7.addItem("Toto");
+        field7.addItem("Toto1");
+        field7.addItem("Toto1");
+        field7.addItem("Toto1");
+        field7.addItem("Toto1");
+        field7.addItem("Toto1");
+        field7.addItem("Toto1");
+        field7.addItem("Toto2");
+        field7.addItem("Toto3");
+        field7.addItem("Toto4");
+        field7.addItem("Toto5");
+        form.addFormField(field1);
+        form.addFormField(field2);
+        form.addFormField(field3);
+        form.addFormField(field4);
+        form.addFormField(field5);
+        form.addFormField(field6);
+        form.addFormField(field7);
+
+        panel.add(field1);
+        panel.add(field2);
+        panel.add(field3);
+        panel.add(field4);
+        panel.add(field5);
+        panel.add(field6);
+        panel.add(field7);
+
+        final PButton buttonC = Element.newPButton("Commit");
+        buttonC.setAttribute("id", buttonC.getID() + "");
+
+        final PButton buttonR = Element.newPButton("Rollback");
+
+        panel.add(buttonC);
+        panel.add(buttonR);
+
+        buttonC.addClickHandler(e -> form.commit());
+        buttonR.addClickHandler(e -> form.rollback());
 
         if (true) return;
 

@@ -23,22 +23,20 @@
 
 package com.ponysdk.core.ui.form.formfield;
 
+import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 
 import com.ponysdk.core.ui.basic.Element;
 import com.ponysdk.core.ui.basic.PListBox;
-import com.ponysdk.core.ui.basic.event.PValueChangeHandler;
 import com.ponysdk.core.ui.form.dataconverter.DataConverter;
 
 public class ListBoxFormField<T> extends AbstractFormField<T, PListBox> {
 
+    protected Set<String> initialSelectedIndexes = new HashSet<>();
+
     public ListBoxFormField() {
         this(Element.newPListBox(), null);
-    }
-
-    public ListBoxFormField(final DataConverter<String, T> dataProvider) {
-        this(Element.newPListBox(), dataProvider);
     }
 
     public ListBoxFormField(final PListBox widget) {
@@ -47,35 +45,30 @@ public class ListBoxFormField<T> extends AbstractFormField<T, PListBox> {
 
     public ListBoxFormField(final Map<String, T> datas) {
         this(Element.newPListBox(), null);
-        for (final Entry<String, T> entry : datas.entrySet()) {
-            widget.addItem(entry.getKey(), entry.getValue());
-        }
+        datas.entrySet().forEach(entry -> widget.addItem(entry.getKey(), entry.getValue()));
     }
 
     public ListBoxFormField(final PListBox widget, final DataConverter<String, T> dataProvider) {
         super(widget, dataProvider);
-    }
-
-    @Override
-    public void addValueChangeHandler(final PValueChangeHandler<T> handler) {
-        if (handlers == null) widget.addChangeHandler(event -> fireValueChange(getValue()));
-        super.addValueChangeHandler(handler);
+        widget.addChangeHandler(event -> fireValueChange(getValue()));
+        initialSelectedIndexes.addAll(widget.getSelectedItems());
     }
 
     @Override
     public void reset0() {
-        widget.setSelectedIndex(-1);
+        widget.selectIndex(-1);
     }
 
     @Override
     public T getValue() {
-        if (dataProvider != null) return dataProvider.to(widget.getSelectedItem());
         return (T) widget.getSelectedValue();
     }
 
     @Override
     protected String getStringValue() {
-        return widget.getSelectedItem();
+        final Object value = widget.getSelectedValue();
+        if (value != null) String.valueOf(value);
+        return null;
     }
 
     @Override
@@ -86,8 +79,30 @@ public class ListBoxFormField<T> extends AbstractFormField<T, PListBox> {
 
     @Override
     public void setValue(final T value) {
-        if (dataProvider != null) widget.setSelectedItem(dataProvider.from(value));
-        else widget.setSelectedValue(value);
+        widget.selectValue(value);
+    }
+
+    public void addItem(final String item) {
+        widget.addItem(item);
+    }
+
+    public void addItem(final String item, final T value) {
+        widget.addItem(item, value);
+    }
+
+    public String getSelectedItem() {
+        return widget.getSelectedItem();
+    }
+
+    @Override
+    public void commit() {
+        initialSelectedIndexes.clear();
+        initialSelectedIndexes.addAll(widget.getSelectedItems());
+    }
+
+    @Override
+    public void rollback() {
+        initialSelectedIndexes.forEach(widget::selectItem);
     }
 
 }

@@ -25,9 +25,10 @@ package com.ponysdk.core.ui.form.formfield;
 
 import com.ponysdk.core.ui.basic.Element;
 import com.ponysdk.core.ui.basic.PCheckBox;
-import com.ponysdk.core.ui.basic.event.PValueChangeHandler;
 
 public class CheckBoxFormField extends AbstractFormField<Boolean, PCheckBox> {
+
+    protected Boolean initialValue;
 
     public CheckBoxFormField() {
         this(Element.newPCheckBox());
@@ -35,12 +36,7 @@ public class CheckBoxFormField extends AbstractFormField<Boolean, PCheckBox> {
 
     public CheckBoxFormField(final PCheckBox widget) {
         super(widget, null);
-    }
-
-    @Override
-    public void addValueChangeHandler(final PValueChangeHandler<Boolean> handler) {
-        if (handlers == null) widget.addValueChangeHandler(event -> fireValueChange(getValue()));
-        super.addValueChangeHandler(handler);
+        widget.addValueChangeHandler(event -> fireValueChange(getValue()));
     }
 
     @Override
@@ -67,6 +63,16 @@ public class CheckBoxFormField extends AbstractFormField<Boolean, PCheckBox> {
     public void setEnabled(final boolean enabled) {
         super.setEnabled(enabled);
         widget.setEnabled(enabled);
+    }
+
+    @Override
+    public void commit() {
+        initialValue = getValue();
+    }
+
+    @Override
+    public void rollback() {
+        setValue(initialValue);
     }
 
 }
