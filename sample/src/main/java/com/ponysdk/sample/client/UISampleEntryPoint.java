@@ -23,45 +23,17 @@
 
 package com.ponysdk.sample.client;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-
 import com.ponysdk.core.model.PUnit;
 import com.ponysdk.core.server.application.UIContext;
 import com.ponysdk.core.server.concurrent.PScheduler;
-import com.ponysdk.core.ui.basic.Element;
-import com.ponysdk.core.ui.basic.PAbsolutePanel;
-import com.ponysdk.core.ui.basic.PAnchor;
-import com.ponysdk.core.ui.basic.PButton;
-import com.ponysdk.core.ui.basic.PCookies;
-import com.ponysdk.core.ui.basic.PDateBox;
-import com.ponysdk.core.ui.basic.PDockLayoutPanel;
-import com.ponysdk.core.ui.basic.PFlowPanel;
-import com.ponysdk.core.ui.basic.PFrame;
-import com.ponysdk.core.ui.basic.PLabel;
-import com.ponysdk.core.ui.basic.PListBox;
-import com.ponysdk.core.ui.basic.PMenuBar;
-import com.ponysdk.core.ui.basic.PRichTextArea;
-import com.ponysdk.core.ui.basic.PScript;
-import com.ponysdk.core.ui.basic.PStackLayoutPanel;
-import com.ponysdk.core.ui.basic.PTabLayoutPanel;
-import com.ponysdk.core.ui.basic.PTextBox;
-import com.ponysdk.core.ui.basic.PTree;
-import com.ponysdk.core.ui.basic.PTreeItem;
-import com.ponysdk.core.ui.basic.PWidget;
-import com.ponysdk.core.ui.basic.PWindow;
+import com.ponysdk.core.ui.basic.*;
 import com.ponysdk.core.ui.basic.event.PClickEvent;
 import com.ponysdk.core.ui.basic.event.PKeyUpEvent;
 import com.ponysdk.core.ui.basic.event.PKeyUpHandler;
 import com.ponysdk.core.ui.datagrid.ColumnDescriptor;
 import com.ponysdk.core.ui.datagrid.DataGrid;
+import com.ponysdk.core.ui.datagrid.dynamic.Configuration;
+import com.ponysdk.core.ui.datagrid.dynamic.DynamicDataGrid;
 import com.ponysdk.core.ui.datagrid.impl.PLabelCellRenderer;
 import com.ponysdk.core.ui.eventbus2.EventBus.EventHandler;
 import com.ponysdk.core.ui.form.Form;
@@ -84,6 +56,17 @@ import com.ponysdk.sample.client.event.UserLoggedOutEvent;
 import com.ponysdk.sample.client.event.UserLoggedOutHandler;
 import com.ponysdk.sample.client.page.addon.LoggerAddOn;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
+
 public class UISampleEntryPoint implements EntryPoint, UserLoggedOutHandler {
 
     private PFlowPanel panel;
@@ -93,6 +76,43 @@ public class UISampleEntryPoint implements EntryPoint, UserLoggedOutHandler {
 
     private PLabel mainLabel;
 
+    class Test {
+        private String a;
+        private Integer b;
+        private boolean c;
+
+        public Test(String a, Integer b, boolean c) {
+            this.a = a;
+            this.b = b;
+            this.c = c;
+        }
+
+        public String getAHJKH() {
+            return a;
+        }
+
+        public void setA(String a) {
+            this.a = a;
+        }
+
+        public Integer getBouou() {
+            return b;
+        }
+
+        public void setB(Integer b) {
+            this.b = b;
+        }
+
+        public boolean isC() {
+            return c;
+        }
+
+        public void setCsdsd(boolean c) {
+            this.c = c;
+        }
+    }
+
+
     @Override
     public void start(final UIContext uiContext) {
         uiContext.setClientDataOutput((object, instruction) -> System.err.println(object + " : " + instruction));
@@ -100,22 +120,22 @@ public class UISampleEntryPoint implements EntryPoint, UserLoggedOutHandler {
         panel = Element.newPFlowPanel();
         PWindow.getMain().add(panel);
 
-        final DataGrid<String> grid = new DataGrid<>(Comparator.comparing(String::length));
-        grid.addColumnDescriptor(ColumnDescriptor.newDefault("Coucou", Function.identity()));
+        //final DataGrid<String> grid = new DynamicDataGrid<>(Comparator.comparing(String::length));
 
-        grid.setData("aa");
-        grid.setData("ab");
-        grid.setData("ac");
-        grid.setData("ad");
-        grid.setData("ad");
-        grid.setData("ae");
-        grid.setData("af");
-        grid.setData("afdsdsd");
-        grid.setData("afdsdsddsds");
-        grid.setData("afdsdsdsdsd");
-        grid.setData("afdsdsdsdsd");
-        grid.setData("af");
-        grid.setData("ag");
+        Predicate<Method> filter = m -> m.getName().contains("AH");
+
+        Configuration<Test> configuration = new Configuration(Test.class, Configuration.DEFAULT_TRANSFORM, filter);
+
+        final DataGrid<Test> grid = new DynamicDataGrid<Test>(configuration, Comparator.comparing(Test::getBouou));
+
+        grid.setData(new Test("aa", 1, true));
+        grid.setData(new Test("bb", 1, true));
+        grid.setData(new Test("cc", 1, true));
+        grid.setData(new Test("dd", 1, true));
+        grid.setData(new Test("ee", 1, true));
+        grid.setData(new Test("ff", 1, true));
+        grid.setData(new Test("gg", 1, true));
+        grid.setData(new Test("hh", 1, true));
 
         panel.add(grid);
 
@@ -393,7 +413,7 @@ public class UISampleEntryPoint implements EntryPoint, UserLoggedOutHandler {
 
     private void testNewEvent() {
         final EventHandler<PClickEvent> handler = UIContext.getNewEventBus().subscribe(PClickEvent.class,
-            event -> System.err.println("B " + event));
+                event -> System.err.println("B " + event));
         UIContext.getNewEventBus().post(new PClickEvent(this));
         UIContext.getNewEventBus().post(new PClickEvent(this));
         UIContext.getNewEventBus().unsubscribe(handler);
@@ -546,7 +566,7 @@ public class UISampleEntryPoint implements EntryPoint, UserLoggedOutHandler {
         windowContainer.add(button1);
         button1.addClickHandler(event -> {
             final PWindow newPWindow = Element.newPWindow(w, "Sub Window 1 " + i.incrementAndGet(),
-                "resizable=yes,location=0,status=0,scrollbars=0");
+                    "resizable=yes,location=0,status=0,scrollbars=0");
             newPWindow.add(Element.newPLabel("Sub window"));
             newPWindow.open();
         });
@@ -555,7 +575,7 @@ public class UISampleEntryPoint implements EntryPoint, UserLoggedOutHandler {
         windowContainer.add(button2);
         button2.addClickHandler(event -> {
             final PWindow newPWindow = Element.newPWindow("Not Sub Window 1 " + i.incrementAndGet(),
-                "resizable=yes,location=0,status=0,scrollbars=0");
+                    "resizable=yes,location=0,status=0,scrollbars=0");
             newPWindow.add(Element.newPLabel("Sub window"));
             newPWindow.open();
         });
@@ -675,7 +695,7 @@ public class UISampleEntryPoint implements EntryPoint, UserLoggedOutHandler {
 
             @Override
             public PKeyCodes[] getFilteredKeys() {
-                return new PKeyCodes[] { PKeyCodes.ENTER };
+                return new PKeyCodes[]{PKeyCodes.ENTER};
             }
         });
         return pTextBox;

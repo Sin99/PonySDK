@@ -23,16 +23,47 @@
 
 package com.ponysdk.impl.main;
 
-import java.util.Arrays;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import com.ponysdk.core.server.application.ApplicationManagerOption;
 import com.ponysdk.core.server.servlet.ApplicationLoader;
 import com.ponysdk.core.server.servlet.JavaApplicationLoader;
 import com.ponysdk.core.ui.main.EntryPoint;
 
+import java.util.Arrays;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 public class Main {
+
+    static class Test {
+        private String a;
+        private Boolean b;
+        private int c;
+
+        public Boolean getB() {
+            return b;
+        }
+
+        public void setB(Boolean b) {
+            this.b = b;
+        }
+
+
+        public String getA() {
+            return a;
+        }
+
+        public void setA(String a) {
+            this.a = a;
+        }
+
+        public int getC() {
+            return c;
+        }
+
+        public void setC(int c) {
+            this.c = c;
+        }
+    }
 
     @SuppressWarnings("unchecked")
     public static void main(final String[] args) throws Exception {
@@ -40,16 +71,16 @@ public class Main {
         applicationManagerOption.setApplicationID(System.getProperty(ApplicationManagerOption.APPLICATION_ID, "ID"));
         applicationManagerOption.setApplicationName(System.getProperty(ApplicationManagerOption.APPLICATION_NAME, "NAME"));
         applicationManagerOption
-            .setApplicationDescription(System.getProperty(ApplicationManagerOption.APPLICATION_DESCRIPTION, "DESCRIPTION"));
+                .setApplicationDescription(System.getProperty(ApplicationManagerOption.APPLICATION_DESCRIPTION, "DESCRIPTION"));
         applicationManagerOption.setApplicationContextName(System.getProperty(ApplicationManagerOption.APPLICATION_CONTEXT_NAME, ""));
         applicationManagerOption.setSessionTimeout(1000);
         applicationManagerOption.setEntryPointClass((Class<? extends EntryPoint>) Class
-            .forName(System.getProperty(ApplicationManagerOption.POINTCLASS, "com.ponysdk.impl.main.BasicEntryPoint")));
+                .forName(System.getProperty(ApplicationManagerOption.POINTCLASS, "com.ponysdk.impl.main.BasicEntryPoint")));
 
         final String styles = System.getProperty(ApplicationManagerOption.STYLESHEETS);
         if (styles != null && !styles.isEmpty()) {
             applicationManagerOption
-                .setStyle(Arrays.stream(styles.trim().split(";")).collect(Collectors.toMap(Function.identity(), Function.identity())));
+                    .setStyle(Arrays.stream(styles.trim().split(";")).collect(Collectors.toMap(Function.identity(), Function.identity())));
         }
 
         final String scripts = System.getProperty(ApplicationManagerOption.JAVASCRIPTS);
