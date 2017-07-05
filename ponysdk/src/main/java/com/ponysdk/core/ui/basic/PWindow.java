@@ -394,7 +394,7 @@ public class PWindow extends PObject {
             UIContext.get().registerObject(this);
             initialized = true;
 
-            UIContext.get().addUIContextListener(uiContext -> onDestroy());
+            UIContext.get().addContextDestroyListener(uiContext -> onDestroy());
         }
 
         @Override

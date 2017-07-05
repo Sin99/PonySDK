@@ -91,6 +91,23 @@ public class UISampleEntryPoint implements EntryPoint, UserLoggedOutHandler {
             return a;
         }
 
+        public String getAHJKHDD() {
+            return a;
+        }
+        public String getDDHJKH() {
+            return a;
+        }
+        public String getAHDDDDJKH() {
+            return a;
+        }
+        public String getDDDDAHJKH() {
+            return a;
+        }
+        public String getDDDDdAHJKH() {
+            return a;
+        }
+
+
         public void setA(String a) {
             this.a = a;
         }
@@ -122,9 +139,9 @@ public class UISampleEntryPoint implements EntryPoint, UserLoggedOutHandler {
 
         //final DataGrid<String> grid = new DynamicDataGrid<>(Comparator.comparing(String::length));
 
-        Predicate<Method> filter = m -> m.getName().contains("AH");
+        //Predicate<Method> filter = m -> m.getName().contains("AH");
 
-        Configuration<Test> configuration = new Configuration(Test.class, Configuration.DEFAULT_TRANSFORM, filter);
+        Configuration<Test> configuration = new Configuration(Test.class);
 
         final DataGrid<Test> grid = new DynamicDataGrid<Test>(configuration, Comparator.comparing(Test::getBouou));
 

@@ -40,11 +40,12 @@ public class PWindowManager {
     }
 
     public static PWindowManager get() {
-        final UIContext session = UIContext.get();
-        PWindowManager windowManager = session.getAttribute(ROOT);
+        final UIContext uiContext = UIContext.get();
+        PWindowManager windowManager = uiContext.getAttribute(ROOT);
         if (windowManager == null) {
             windowManager = new PWindowManager();
-            session.setAttribute(ROOT, windowManager);
+            uiContext.setAttribute(ROOT, windowManager);
+            uiContext.addContextDestroyListener(context -> closeAll());
         }
         return windowManager;
     }
@@ -61,6 +62,10 @@ public class PWindowManager {
         get().unregisterWindow0(window);
     }
 
+    public static void closeAll() {
+        get().closeAll0();
+    }
+
     public static final Collection<PWindow> getWindows() {
         return get().registeredWindows.values();
     }
@@ -74,8 +79,9 @@ public class PWindowManager {
         registeredWindows.remove(window.getID());
     }
 
-    public void closeAll() {
+    private void closeAll0() {
         registeredWindows.forEach((id, window) -> window.close());
+        registeredWindows.clear();
     }
 
 }

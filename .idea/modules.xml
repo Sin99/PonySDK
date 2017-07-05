@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/PonySDK.iml" filepath="$PROJECT_DIR$/.idea/modules/PonySDK.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PonySDK.iml" filepath="$PROJECT_DIR$/PonySDK.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/ponysdk/ponysdk.iml" filepath="$PROJECT_DIR$/.idea/modules/ponysdk/ponysdk.iml" group="ponysdk" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/ponysdk/ponysdk_main.iml" filepath="$PROJECT_DIR$/.idea/modules/ponysdk/ponysdk_main.iml" group="ponysdk" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/ponysdk/ponysdk_test.iml" filepath="$PROJECT_DIR$/.idea/modules/ponysdk/ponysdk_test.iml" group="ponysdk" />
