@@ -86,9 +86,7 @@ public class WebSocketClient implements MessageSender {
                 log.severe("WebSoket disconnected : " + event);
             }
         });
-        webSocket.setOnerror(event -> {
-            log.severe("WebSoket error : " + event);
-        });
+        webSocket.setOnerror(event -> log.severe("WebSoket error : " + event));
         webSocket.setOnmessage(event -> messageReader.read((MessageEvent) event));
     }
 

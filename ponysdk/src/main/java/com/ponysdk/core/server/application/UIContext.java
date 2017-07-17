@@ -100,7 +100,6 @@ public class UIContext {
 
     private final PCookies cookies = new PCookies();
 
-    private final CommunicationSanityChecker communicationSanityChecker;
     private final List<ContextDestroyListener> destroyListeners = new ArrayList<>();
     private final TxnContext context;
     private final Set<DataListener> listeners = Collections.newSetFromMap(new ConcurrentHashMap<>());
@@ -115,9 +114,6 @@ public class UIContext {
         this.application = context.getApplication();
         this.ID = uiContextCount.incrementAndGet();
         this.context = context;
-
-        this.communicationSanityChecker = new CommunicationSanityChecker(this);
-        this.communicationSanityChecker.start();
     }
 
     public static final UIContext get() {
@@ -399,10 +395,6 @@ public class UIContext {
         return application;
     }
 
-    public void notifyMessageReceived() {
-        communicationSanityChecker.onMessageReceived();
-    }
-
     public void onDestroy() {
         begin();
         try {
@@ -416,7 +408,6 @@ public class UIContext {
         begin();
         try {
             living = false;
-            communicationSanityChecker.stop();
             destroyListeners.forEach(listener -> {
                 try {
                     listener.onBeforeDestroy(this);
@@ -444,7 +435,6 @@ public class UIContext {
 
     private void doDestroy() {
         living = false;
-        communicationSanityChecker.stop();
         application.unregisterUIContext(ID);
         destroyListeners.forEach(listener -> listener.onBeforeDestroy(this));
     }
@@ -499,10 +489,6 @@ public class UIContext {
     @Override
     public String toString() {
         return "UIContext [ID=" + ID + ", living=" + living + ", ApplicationID=" + application.getId() + "]";
-    }
-
-    public void enableCommunicationChecker(final boolean enable) {
-        communicationSanityChecker.enableCommunicationChecker(enable);
     }
 
     public void addPingValue(final long pingValue) {

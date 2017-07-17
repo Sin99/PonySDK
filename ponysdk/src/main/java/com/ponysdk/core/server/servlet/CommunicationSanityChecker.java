@@ -75,6 +75,8 @@ public class CommunicationSanityChecker {
 
     public CommunicationSanityChecker(final UIContext uiContext) {
         this.uiContext = uiContext;
+        this.uiContext.addContextDestroyListener(context -> stop());
+
         final ApplicationManagerOption options = uiContext.getApplication().getOptions();
         setHeartBeatPeriod(options.getHeartBeatPeriod(), options.getHeartBeatPeriodTimeUnit());
         enableCommunicationChecker(!uiContext.getApplication().getOptions().isDebugMode());

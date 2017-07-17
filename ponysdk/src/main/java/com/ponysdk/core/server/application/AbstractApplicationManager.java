@@ -49,8 +49,6 @@ public abstract class AbstractApplicationManager {
             final Txn txn = Txn.get();
             txn.begin(txnContext);
             try {
-                uiContext.notifyMessageReceived();
-
                 final EntryPoint entryPoint = initializeUIContext(uiContext);
 
                 final String historyToken = txnContext.getHistoryToken();
